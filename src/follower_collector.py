@@ -24,17 +24,23 @@ def chunks(seq, size):
 
 
 def get_channels(channel_ids):
-    # 공식 문서는 channelIds를 String[]로 정의한다.
-    # requests에 같은 키를 반복 전달해 배열 쿼리 파라미터로 전송한다.
-    params = [("channelIds", cid) for cid in channel_ids]
+
+    params = {
+        "channelIds": ",".join(channel_ids)
+    }
+
     r = request_with_retry(
         "GET",
         f"{CHZZK_BASE}/open/v1/channels",
         headers=CHZZK_HEADERS,
         params=params,
     )
+
     payload = r.json()
-    return (payload.get("content") or {}).get("data") or []
+
+    return (
+        payload.get("content") or {}
+    ).get("data") or []
 
 
 def main():
